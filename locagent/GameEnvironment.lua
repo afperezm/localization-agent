@@ -15,7 +15,7 @@ function gameEnv:__init(_opt)
 end
 
 
---[[
+--[[ Initializes the game environment.
 ]]
 function gameEnv:_init(_env, _params, _config_file)
 
@@ -28,6 +28,12 @@ function gameEnv:_init(_env, _params, _config_file)
 
   py.exec([[import learn.rl.RLConfig as config]])
   py.exec([[config.readConfiguration(configFile)]], {configFile = config_file})
+  py.exec([[import ImageDraw]])
+  py.exec([[import numpy]])
+  py.exec([[from dotmap import DotMap]])
+  py.exec([[from detection.boxsearch.BoxSearchEnvironment import BoxSearchEnvironment]])
+  py.exec([[from detection.boxsearch.BoxSearchTask import BoxSearchTask]])
+  py.exec([[import detection.boxsearch.BoxSearchState as BoxSearchState]])
 
   self._actions   = self:getActions()
 
@@ -41,23 +47,38 @@ function gameEnv:_init(_env, _params, _config_file)
 
   py.exec([[groundTruthFile = config.get(mode + 'GroundTruth')]])
 
-  py.exec([[from dotmap import DotMap]])
   py.exec([[controller = DotMap()]])
-  py.exec([[controller.net = None]])
 
-  py.exec([[from detection.boxsearch.BoxSearchEnvironment import BoxSearchEnvironment]])
+py.exec([=[
+def prepareImage(image):
+  pass
+]=])
+
+py.exec([=[
+def coverRegion(box):
+  print('Covering region')
+  w = box[2]-box[0]
+  h = box[3]-box[1]
+  b1 = map(int, [box[0] + w*0.5 - w*config.getf('markWidth'), box[1], box[0] + w*0.5 + w*config.getf('markWidth'), box[3]])
+  b2 = map(int, [box[0], box[1] + h*0.5 - h*config.getf('markWidth'), box[2], box[1] + h*0.5 + h*config.getf('markWidth')])
+  draw = ImageDraw.Draw(task.env.state.visibleImage)
+  draw.rectangle(b1, fill=1)
+  draw.rectangle(b2, fill=1)
+  del draw
+]=])
+
+  py.exec([[controller.net.coverRegion = coverRegion]])
+  py.exec([[controller.net.prepareImage = prepareImage]])
+
   py.exec([[environment = BoxSearchEnvironment(imageList, mode, controller, groundTruthFile)]])
 
-  py.exec([[from detection.boxsearch.BoxSearchTask import BoxSearchTask]])
   py.exec([[task = BoxSearchTask(environment, groundTruthFile)]])
 
   return self
 end
 
 
---[[ Function advances the emulator state until a new game starts and returns
-this state. The new game may be a different one, in the sense that playing back
-the exact same sequence of actions will result in different outcomes.
+--[[ Starts a new game and returns its state.
 ]]
 function gameEnv:newGame()
 
@@ -77,8 +98,7 @@ function gameEnv:newGame()
 end
 
 
---[[ Function advances the emulator state until a new (random) game starts and
-returns this state.
+--[[ Starts a new game by loading a new episode and returns its state.
 ]]
 function gameEnv:nextRandomGame(k)
   return self:newGame()
@@ -92,10 +112,7 @@ telling whether the game has finished.
 function gameEnv:getState()
 
   py.exec([[sensors = task.env.getSensors()]])
-  py.exec([[image = task.env.state.visibleImage]])
-  py.exec([[cropped_image = image.crop(map(int,sensors['state'])).resize([50,50])]])
-
-  py.exec([[import numpy]])
+  py.exec([[cropped_image = task.env.state.visibleImage.crop(map(int,sensors['state'])).resize([50,50])]])
 
   self._state.observation = py.eval([[numpy.array(cropped_image.getdata()).reshape(cropped_image.size[0], cropped_image.size[1], 3)]])
   self._state.reward = py.eval([[task.getReward()]])
@@ -129,8 +146,6 @@ end
 --[[ Returns a table with valid game actions.
 ]]
 function gameEnv:getActions()
-
-  py.exec([[import detection.boxsearch.BoxSearchState as BoxSearchState]])
 
   py.exec('actions = [BoxSearchState.X_COORD_UP]')
   py.exec('actions.append(BoxSearchState.Y_COORD_UP)')
