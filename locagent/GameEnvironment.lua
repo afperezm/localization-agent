@@ -50,12 +50,16 @@ def coverRegion(box):
   h = box[3]-box[1]
   b1 = map(int, [box[0] + w*0.5 - w*config.getf('markWidth'), box[1], box[0] + w*0.5 + w*config.getf('markWidth'), box[3]])
   b2 = map(int, [box[0], box[1] + h*0.5 - h*config.getf('markWidth'), box[2], box[1] + h*0.5 + h*config.getf('markWidth')])
-  draw = ImageDraw.Draw(task.env.state.visibleImage)
+  if isTraining:
+    draw = ImageDraw.Draw(task.env.state.visibleImage)
+  else:
+    draw = ImageDraw.Draw(testingTask.env.state.visibleImage)
   draw.rectangle(b1, fill=1)
   draw.rectangle(b2, fill=1)
   del draw
-]=])
+]=], {isTraining = self._isTraining})
 
+  print('\nInitializing training environment')
   py.exec([[k = 0]])
   py.exec([[maxInteractions = config.geti('trainInteractions')]])
   py.exec([[imageList = config.get('trainDatabase')]])
@@ -66,6 +70,7 @@ def coverRegion(box):
   py.exec([[environment = BoxSearchEnvironment(imageList, 'train', controller, groundTruthFile)]])
   py.exec([[task = BoxSearchTask(environment, groundTruthFile)]])
 
+  print('\nInitializing testing environment')
   py.exec([[testingK = 0]])
   py.exec([[testingMaxInteractions = config.geti('testInteractions')]])
   py.exec([[testingImageList = config.get('testDatabase')]])
