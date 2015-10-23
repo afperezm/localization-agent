@@ -8,8 +8,8 @@ local gameEnv = torch.class('locagent.GameEnvironment')
 ]]
 function gameEnv:__init(_opt)
   local _opt = _opt or {}
-  self.verbose = _opt.verbose or 0
-  self._state = {}
+  self._verbose = _opt.verbose or 0
+  self._state = {reward = -1}
   self:_init(_opt.env, _opt.env_params, _opt.config_file)
   return self
 end
@@ -22,7 +22,7 @@ function gameEnv:_init(_env, _params, _config_file)
   local env = _env or 'localization_game'
   local config_file = _config_file or '/home/andresf/workspace-locagent/jointNetwork/debug/aeroplane0/rl.config'
 
-  if self.verbose > 0 then
+  if self._verbose > 0 then
     print('\nPlaying:', env)
   end
 
@@ -115,7 +115,6 @@ function gameEnv:getState()
   py.exec([[cropped_image = task.env.state.visibleImage.crop(map(int,sensors['state'])).resize([50,50])]])
 
   self._state.observation = py.eval([[numpy.array(cropped_image.getdata()).reshape(cropped_image.size[0], cropped_image.size[1], 3)]])
-  self._state.reward = py.eval([[task.getReward()]])
   self._state.terminal = py.eval([[task.env.episodeDone or k >= maxInteractions]])
 
   return self._state.observation, self._state.reward, self._state.terminal
@@ -125,9 +124,11 @@ end
 --[[ Plays a given action in the game and returns the game state.
 ]]
 function gameEnv:step(action, training)
-  assert(action)
+  assert(action > 0)
 
   py.exec([[task.performAction([actionChosen, float(actionValue)])]], {actionChosen = self._actions[action], actionValue = -1})
+
+  self._state.reward = py.eval([[task.getReward()]])
 
   py.exec([[k += 1]])
 
