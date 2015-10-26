@@ -44,20 +44,30 @@ def prepareImage(image):
 ]=])
 
 py.exec([=[
-def coverRegion(box):
-  print('Covering region')
+def coverTrainingRegion(box):
+  print('Covering training region')
   w = box[2]-box[0]
   h = box[3]-box[1]
   b1 = map(int, [box[0] + w*0.5 - w*config.getf('markWidth'), box[1], box[0] + w*0.5 + w*config.getf('markWidth'), box[3]])
   b2 = map(int, [box[0], box[1] + h*0.5 - h*config.getf('markWidth'), box[2], box[1] + h*0.5 + h*config.getf('markWidth')])
-  if isTraining:
-    draw = ImageDraw.Draw(task.env.state.visibleImage)
-  else:
-    draw = ImageDraw.Draw(testingTask.env.state.visibleImage)
+  draw = ImageDraw.Draw(task.env.state.visibleImage)
   draw.rectangle(b1, fill=1)
   draw.rectangle(b2, fill=1)
   del draw
-]=], {isTraining = self._isTraining})
+]=])
+
+py.exec([=[
+def coverTestingRegion(box):
+  print('Covering testing region')
+  w = box[2]-box[0]
+  h = box[3]-box[1]
+  b1 = map(int, [box[0] + w*0.5 - w*config.getf('markWidth'), box[1], box[0] + w*0.5 + w*config.getf('markWidth'), box[3]])
+  b2 = map(int, [box[0], box[1] + h*0.5 - h*config.getf('markWidth'), box[2], box[1] + h*0.5 + h*config.getf('markWidth')])
+  draw = ImageDraw.Draw(testingTask.env.state.visibleImage)
+  draw.rectangle(b1, fill=1)
+  draw.rectangle(b2, fill=1)
+  del draw
+]=])
 
   print('\nInitializing training environment')
   py.exec([[k = 0]])
@@ -65,7 +75,7 @@ def coverRegion(box):
   py.exec([[imageList = config.get('trainDatabase')]])
   py.exec([[groundTruthFile = config.get('trainGroundTruth')]])
   py.exec([[controller = DotMap()]])
-  py.exec([[controller.net.coverRegion = coverRegion]])
+  py.exec([[controller.net.coverRegion = coverTrainingRegion]])
   py.exec([[controller.net.prepareImage = prepareImage]])
   py.exec([[environment = BoxSearchEnvironment(imageList, 'train', controller, groundTruthFile)]])
   py.exec([[task = BoxSearchTask(environment, groundTruthFile)]])
@@ -76,7 +86,7 @@ def coverRegion(box):
   py.exec([[testingImageList = config.get('testDatabase')]])
   py.exec([[testingGroundTruthFile = config.get('testGroundTruth')]])
   py.exec([[testingController = DotMap()]])
-  py.exec([[testingController.net.coverRegion = coverRegion]])
+  py.exec([[testingController.net.coverRegion = coverTestingRegion]])
   py.exec([[testingController.net.prepareImage = prepareImage]])
   py.exec([[testingEnvironment = BoxSearchEnvironment(testingImageList, 'test', testingController, testingGroundTruthFile)]])
   py.exec([[testingTask = BoxSearchTask(testingEnvironment, testingGroundTruthFile)]])
