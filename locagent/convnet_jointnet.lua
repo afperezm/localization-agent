@@ -8,8 +8,8 @@ return function(args)
     local prototxt = args.prototxt or '/home/jccaicedoru/bvlc_alexnet/deploy.prototxt'
     local binary = args.binary or '/home/jccaicedoru/bvlc_alexnet/bvlc_alexnet.caffemodel'
 
-    local alexnet = load_alexnet(args)
-    local qnet = load_qnet(args)
+    local alexnet = load_alexnet(prototxt, binary)
+    local qnet = load_qnet()
 
     -- Remove soft max layer
     alexnet:remove(alexnet:size())

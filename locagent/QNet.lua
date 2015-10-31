@@ -2,7 +2,7 @@
 
 require 'nn'
 
-function load_qnet(args)
+function load_qnet()
 
   local model = nn.Sequential()
 

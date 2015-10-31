@@ -1,5 +1,5 @@
 require 'loadcaffe'
 
-function load_alexnet(args)
-  return loadcaffe.load(args.prototxt, args.binary)
+function load_alexnet(caffe_prototxt, caffe_binary)
+  return loadcaffe.load(caffe_prototxt, caffe_binary)
 end
