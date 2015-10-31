@@ -4,7 +4,7 @@ require 'QNet'
 
 return function(args)
 
-    local add_history = args.add_history or true
+    local add_history = args.add_history or false
     local prototxt = args.prototxt or '/home/jccaicedoru/bvlc_alexnet/deploy.prototxt'
     local binary = args.binary or '/home/jccaicedoru/bvlc_alexnet/bvlc_alexnet.caffemodel'
 
@@ -23,10 +23,12 @@ return function(args)
     alexnet:remove(alexnet:size())
 
     if add_history then
-      local mlp = nn.Concat(1)
-      local input_size = qnet:get(1).weight:size()[2]
-      mlp:add(nn.Linear(input_size, 100))
-      mlp:add(qnet:get(1))
+      local full_feature_model = nn.Concat(1)
+      local num_features = qnet:get(1).weight:size()[2]
+      local actions_history = nn.Linear(num_features, 100)
+      full_feature_model:add(actions_history)
+      full_feature_model:add(qnet:get(1))
+      alexnet:add(full_feature_model)
     else
       alexnet:add(qnet:get(1))
     end
