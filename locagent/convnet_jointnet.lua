@@ -22,6 +22,8 @@ return function(args)
     alexnet:remove(alexnet:size())
     alexnet:remove(alexnet:size())
 
+    -- Add layer 1
+    -- Linear
     if add_history then
       local full_feature_model = nn.Concat(1)
       local num_features = qnet:get(1).weight:size()[2]
@@ -32,12 +34,17 @@ return function(args)
     else
       alexnet:add(qnet:get(1))
     end
-
+    -- ReLU
     alexnet:add(qnet:get(2))
 
+    -- Add layer 2
+    -- Linear
     alexnet:add(qnet:get(3))
-
+    -- ReLU
     alexnet:add(qnet:get(4))
+
+    -- Add Q-Values layer
+    alexnet:add(qnet:get(5))
 
     return alexnet
 end
