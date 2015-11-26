@@ -9,7 +9,7 @@ return function(args)
     local binary = args.binary or '/home/jccaicedoru/bvlc_alexnet/bvlc_alexnet.caffemodel'
 
     local alexnet = load_alexnet(prototxt, binary)
-    local qnet = load_qnet()
+    local qnet = load_qnet(add_history)
 
     -- Remove soft max layer
     alexnet:remove(alexnet:size())

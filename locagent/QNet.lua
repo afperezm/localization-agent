@@ -2,13 +2,16 @@
 
 require 'nn'
 
-function load_qnet()
+function load_qnet(add_history)
 
   local model = nn.Sequential()
 
   -- fc1
-  --model:add(nn.Linear(4196, 1024))
-  model:add(nn.Linear(4096, 1024))
+  if add_history then
+    model:add(nn.Linear(4196, 1024))
+  else
+    model:add(nn.Linear(4096, 1024))
+  end
   model.modules[#model.modules].weight:normal(0, 0.005)
   model.modules[#model.modules].bias:fill(0.1)
 
