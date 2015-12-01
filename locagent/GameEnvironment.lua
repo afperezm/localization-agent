@@ -29,7 +29,7 @@ function gameEnv:_init(_env, _params)
 
   py.exec([[import learn.rl.RLConfig as config]])
   py.exec([[config.readConfiguration(configFile)]], {configFile = config_file})
-  py.exec([[import ImageDraw]])
+  py.exec([[from PIL import ImageDraw]])
   py.exec([[import numpy]])
   py.exec([[from dotmap import DotMap]])
   py.exec([[from detection.boxsearch.BoxSearchEnvironment import BoxSearchEnvironment]])
