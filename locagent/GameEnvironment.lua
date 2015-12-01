@@ -11,17 +11,17 @@ function gameEnv:__init(_opt)
   self._isTraining = true
   self._verbose = _opt.verbose or 0
   self._state = {reward = -1}
-  self:_init(_opt.env, _opt.env_params, _opt.config_file)
+  self:_init(_opt.env, _opt.env_params or {})
   return self
 end
 
 
 --[[ Initializes the game environment.
 ]]
-function gameEnv:_init(_env, _params, _config_file)
+function gameEnv:_init(_env, _params)
 
   local env = _env or 'localization_game'
-  local config_file = _config_file or '/home/andresf/workspace-locagent/jointNetwork/debug/aeroplane0/rl.config'
+  local config_file = _params.config_file
 
   if self._verbose > 0 then
     print('\nPlaying:', env)
