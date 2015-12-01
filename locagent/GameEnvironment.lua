@@ -36,8 +36,6 @@ function gameEnv:_init(_env, _params)
   py.exec([[from detection.boxsearch.BoxSearchTask import BoxSearchTask]])
   py.exec([[import detection.boxsearch.BoxSearchState as BoxSearchState]])
 
-  self._actions = self:getActions()
-
 py.exec([=[
 def prepareImage(image):
   pass
@@ -151,14 +149,14 @@ end
 --[[ Plays a given action in the game and returns the game state.
 ]]
 function gameEnv:step(action)
-  assert(action > 0)
+  assert(action >= 0 and action <=9)
 
   if self._isTraining then
-    py.exec([[task.performAction([actionChosen, float(actionValue)])]], {actionChosen = self._actions[action], actionValue = -1})
+    py.exec([[task.performAction([actionChosen, float(actionValue)])]], {actionChosen = action, actionValue = -1})
     self._state.reward = py.eval([[task.getReward()]])
     py.exec([[k += 1]])
   else
-    py.exec([[testingTask.performAction([actionChosen, float(actionValue)])]], {actionChosen = self._actions[action], actionValue = -1})
+    py.exec([[testingTask.performAction([actionChosen, float(actionValue)])]], {actionChosen = action, actionValue = -1})
     self._state.reward = py.eval([[testingTask.getReward()]])
     py.exec([[testingK += 1]])
   end
