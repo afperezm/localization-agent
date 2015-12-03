@@ -169,7 +169,7 @@ end
 from the current game.
 ]]
 function gameEnv:nObsFeature()
-  return 50 * 50
+  return 50 * 50 * 3
 end
 
 
