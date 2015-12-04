@@ -132,12 +132,12 @@ function gameEnv:getState()
 
   if self._isTraining then
     py.exec([[sensors = task.env.getSensors()]])
-    py.exec([[cropped_image = task.env.state.visibleImage.crop(map(int,sensors['state'])).resize([50,50])]])
+    py.exec([[cropped_image = task.env.state.visibleImage.crop(map(int,sensors['state'])).resize([227,227])]])
     self._state.observation = py.eval([[numpy.array(cropped_image.getdata()).reshape(cropped_image.size[0], cropped_image.size[1], 3)]])
     self._state.terminal = py.eval([[task.env.episodeDone or k >= maxInteractions]])
   else
     py.exec([[sensors = testingTask.env.getSensors()]])
-    py.exec([[cropped_image = testingTask.env.state.visibleImage.crop(map(int,sensors['state'])).resize([50,50])]])
+    py.exec([[cropped_image = testingTask.env.state.visibleImage.crop(map(int,sensors['state'])).resize([227,227])]])
     self._state.observation = py.eval([[numpy.array(cropped_image.getdata()).reshape(cropped_image.size[0], cropped_image.size[1], 3)]])
     self._state.terminal = py.eval([[testingTask.env.episodeDone or testingK >= testingMaxInteractions]])
   end
@@ -169,7 +169,7 @@ end
 from the current game.
 ]]
 function gameEnv:nObsFeature()
-  return 50 * 50 * 3
+  return 227 * 227 * 3
 end
 
 
