@@ -146,6 +146,13 @@ function gameEnv:getState()
 end
 
 
+--[[ Sets the game mode to testing.
+]]
+function gameEnv:enableTestingMode()
+  self._isTraining = false
+end
+
+
 --[[ Plays a given action in the game and returns the game state.
 ]]
 function gameEnv:step(action)
