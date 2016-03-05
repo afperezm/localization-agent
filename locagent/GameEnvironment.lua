@@ -193,7 +193,7 @@ function gameEnv:getActions()
   py.exec('actions.append(BoxSearchState.SCALE_DOWN)')
   py.exec('actions.append(BoxSearchState.ASPECT_RATIO_DOWN)')
   py.exec('actions.append(BoxSearchState.PLACE_LANDMARK)')
-  py.exec('actions.append(BoxSearchState.SKIP_REGION)')
+  -- py.exec('actions.append(BoxSearchState.SKIP_REGION)')
 
   return py.eval('actions')
 end
