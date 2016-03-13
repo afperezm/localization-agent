@@ -162,7 +162,7 @@ function gameEnv:step(action)
     py.exec([[task.performAction([actionChosen, float(actionValue)])]], {actionChosen = action, actionValue = -1})
     self._state.reward = py.eval([[task.getReward()]])
     py.exec([[k += 1]])
-    if py.eval([[task.env.idx]]) >= py.eval([[len(task.env.imageList)]]) then
+    if py.eval([[task.env.idx]]) == py.eval([[len(task.env.imageList)]]) - 1 then
       py.exec([[task.displayEpisodePerformance()]])
       py.exec([[task.flushStats()]])
     end
@@ -170,7 +170,7 @@ function gameEnv:step(action)
     py.exec([[testingTask.performAction([actionChosen, float(actionValue)])]], {actionChosen = action, actionValue = -1})
     self._state.reward = py.eval([[testingTask.getReward()]])
     py.exec([[testingK += 1]])
-    if py.eval([[testingTask.env.idx]]) >= py.eval([[len(testingTask.env.imageList)]]) then
+    if py.eval([[testingTask.env.idx]]) == py.eval([[len(testingTask.env.imageList)]]) - 1 then
       py.exec([[testingTask.displayEpisodePerformance()]])
       py.exec([[testingTask.flushStats()]])
     end
