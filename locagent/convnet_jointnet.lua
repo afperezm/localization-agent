@@ -7,9 +7,10 @@ return function(args)
     local add_history = args.add_history or false
     local prototxt = args.prototxt or '/home/jccaicedoru/bvlc_alexnet/deploy.prototxt'
     local binary = args.binary or '/home/jccaicedoru/bvlc_alexnet/bvlc_alexnet.caffemodel'
+    local num_actions = args.num_actions or 9
 
     local alexnet = load_alexnet(prototxt, binary)
-    local qnet = load_qnet(add_history)
+    local qnet = load_qnet(add_history, num_actions)
 
     -- Remove soft max layer
     alexnet:remove(alexnet:size())
