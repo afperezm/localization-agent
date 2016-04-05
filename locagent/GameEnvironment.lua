@@ -23,6 +23,8 @@ function gameEnv:_init(_env, _params)
   local env = _env or 'localization_game'
   local config_file = _params.config_file
 
+  self._num_actions = _params.num_actions
+
   if self._verbose > 0 then
     print('\nPlaying:', env)
   end
@@ -201,7 +203,10 @@ function gameEnv:getActions()
   py.exec('actions.append(BoxSearchState.SCALE_DOWN)')
   py.exec('actions.append(BoxSearchState.ASPECT_RATIO_DOWN)')
   py.exec('actions.append(BoxSearchState.PLACE_LANDMARK)')
-  py.exec('actions.append(BoxSearchState.SKIP_REGION)')
+
+  if self._num_actions == 10 then
+    py.exec('actions.append(BoxSearchState.SKIP_REGION)')
+  end
 
   return py.eval('actions')
 end
