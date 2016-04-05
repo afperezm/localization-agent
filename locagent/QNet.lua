@@ -27,7 +27,7 @@ function load_qnet(add_history, num_actions)
   model:add(nn.ReLU(true))
 
   -- q-values
-  model:add(nn.Linear(1024, 10))
+  model:add(nn.Linear(1024, num_actions))
   model.modules[#model.modules].weight:normal(0, 0.01)
   model.modules[#model.modules].bias:fill(0)
 
