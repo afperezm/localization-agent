@@ -158,23 +158,21 @@ end
 --[[ Plays a given action in the game and returns the game state.
 ]]
 function gameEnv:step(action)
-  assert(action >= 0 and action <=9)
+  assert(action >= 0 and action <= 9)
 
   if self._isTraining then
     py.exec([[task.performAction([actionChosen, float(actionValue)])]], {actionChosen = action, actionValue = -1})
     self._state.reward = py.eval([[task.getReward()]])
     py.exec([[k += 1]])
-    if py.eval([[task.env.idx]]) == py.eval([[len(task.env.imageList)]]) - 1 then
+    if py.eval([[task.env.episodeDone or k >= maxInteractions]]) then
       py.exec([[task.displayEpisodePerformance()]])
-      py.exec([[task.flushStats()]])
     end
   else
     py.exec([[testingTask.performAction([actionChosen, float(actionValue)])]], {actionChosen = action, actionValue = -1})
     self._state.reward = py.eval([[testingTask.getReward()]])
     py.exec([[testingK += 1]])
-    if py.eval([[testingTask.env.idx]]) == py.eval([[len(testingTask.env.imageList)]]) - 1 then
+    if py.eval([[testingTask.env.episodeDone or testingK >= testingMaxInteractions]]) then
       py.exec([[testingTask.displayEpisodePerformance()]])
-      py.exec([[testingTask.flushStats()]])
     end
   end
 
