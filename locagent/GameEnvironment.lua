@@ -164,14 +164,16 @@ function gameEnv:step(action)
     py.exec([[task.performAction([actionChosen, float(actionValue)])]], {actionChosen = action, actionValue = -1})
     self._state.reward = py.eval([[task.getReward()]])
     py.exec([[k += 1]])
-    if py.eval([[task.env.episodeDone or k >= maxInteractions]]) then
+    -- Display episode performance for the last image
+    if py.eval([[task.env.idx == len(task.env.imageList) - 1 and task.env.episodeDone or k >= maxInteractions]]) then
       py.exec([[task.displayEpisodePerformance()]])
     end
   else
     py.exec([[testingTask.performAction([actionChosen, float(actionValue)])]], {actionChosen = action, actionValue = -1})
     self._state.reward = py.eval([[testingTask.getReward()]])
     py.exec([[testingK += 1]])
-    if py.eval([[testingTask.env.episodeDone or testingK >= testingMaxInteractions]]) then
+    -- Display episode performance for the last image
+    if py.eval([[testingTask.env.idx == len(testingTask.env.imageList) - 1 and testingTask.env.episodeDone or testingK >= testingMaxInteractions]]) then
       py.exec([[testingTask.displayEpisodePerformance()]])
     end
   end
