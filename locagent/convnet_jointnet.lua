@@ -13,17 +13,6 @@ return function(args)
     local alexnet = load_alexnet(prototxt, binary)
     local qnet = load_qnet(num_actions)
 
-    -- Remove soft max layer
-    alexnet:remove(alexnet:size())
-
-    -- Remove output layer
-    alexnet:remove(alexnet:size())
-
-    -- Remove fc7 layer
-    alexnet:remove(alexnet:size())
-    alexnet:remove(alexnet:size())
-    alexnet:remove(alexnet:size())
-
     -- Add layer 1
     -- Linear
     alexnet:add(qnet:get(1))
